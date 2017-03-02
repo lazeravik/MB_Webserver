@@ -55,6 +55,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action.cs" />
     <Compile Include="HTTPServer.cs" />
     <Compile Include="mbwebDLL.cs" />
     <Compile Include="MusicBeeInterface.cs" />

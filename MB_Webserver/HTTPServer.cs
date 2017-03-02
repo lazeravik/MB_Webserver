@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using static MusicBeePlugin.Plugin;
 
 namespace MusicBeePlugin
 {
@@ -11,12 +12,11 @@ namespace MusicBeePlugin
 		private TcpListener listener;
 		public const string SERVER_VER = "HTTP/1.0";
 		public const string SERVER_NAME = "MusicBee Webserver";
-		private string PluginDir;
 		private Thread serverThread;
+		public MusicBeeApiInterface mbApiInterface;
 
 		public HTTPServer(int port)
 		{
-			PluginDir = Environment.CurrentDirectory + "/Plugins/web/";
 			listener = new TcpListener(IPAddress.Any, port);
 		}
 
@@ -44,7 +44,7 @@ namespace MusicBeePlugin
 			using (StreamWriter writer = new StreamWriter(client.GetStream()))
 			{
 				Request request = Request.GetRequest(client.GetStream());
-				Response.SendResponseFromRequest(request, client.GetStream());
+				Response.SendResponseFromRequest(request, client.GetStream(), mbApiInterface);
 			}
 		}
 	}

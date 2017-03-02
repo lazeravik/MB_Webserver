@@ -9,12 +9,14 @@ namespace MusicBeePlugin
 	public partial class MainWindow : Window
 	{
 		private HTTPServer server;
-		private MusicBeeApiInterface mbInterface;
+		public MusicBeeApiInterface mbInterface;
+
 		public MainWindow(HTTPServer server, MusicBeeApiInterface mbInterface)
 		{
 			InitializeComponent();
 			this.server = server;
 			this.mbInterface = mbInterface;
+			server.mbApiInterface = mbInterface;
 			runningIndicator.Visibility = Visibility.Hidden;
 		}
 
@@ -23,6 +25,12 @@ namespace MusicBeePlugin
 			server.Start();
 			runningIndicator.Visibility = Visibility.Visible;
 			notRunningIndicator.Visibility = Visibility.Hidden;
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			mbInterface.Player_PlayPause();
+			MessageBox.Show(mbInterface.Player_GetPlayState().ToString());
 		}
 	}
 }
