@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MusicBeePlugin.Properties {
+namespace Response.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MusicBeePlugin.Properties {
+namespace Response.Properties {
     using System;
     
     

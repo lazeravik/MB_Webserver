@@ -1,11 +1,456 @@
 ﻿<!doctype html>
 <html>
 <head>
-	<title>
-		It wokrs!
-	</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MusicBee WebUI</title>
+    <link rel="shortcut icon" type="image/icon" href="./favicon.ico"/>
+    <link rel="stylesheet" href="./css/fontello-embedded.css">
+    <link rel="stylesheet" href="./css/style.css">
+
 </head>
 <body>
-	<h1>whatever</h1>
+<nav class="menu">
+    <ul>
+        <li><a href="#">menu1</a></li>
+        <li><a href="#">menu2</a></li>
+        <li><a href="#">menu3</a></li>
+        <li><a id="pull-data" href="#">Pull Data</a></li>
+    </ul>
+</nav>
+<div class="sidebar collapsed">
+    <ul>
+        <li><a href="#"><i class="ficon icon-note-beamed"></i></a></li>
+        <li><a href="#"><i class="ficon icon-doc-text-inv"></i></a></li>
+        <li><a href="#"><i class="ficon icon-thumbs-up"></i></a></li>
+        <li><a href="#"><i class="ficon icon-tools"></i></a></li>
+    </ul>
+</div>
+
+<div class="content-wrapper">
+    <div class="content">
+        <div class="song-info" id="song-info">
+            <div class="overlay">
+                <div class="artwork">
+                    <img id="current-track-artwork" class="current-track-artwork" src="/img/artwork-default.png">
+                </div>
+                <div class="trackinfo">
+                    <h1 id="title-big" class="track-title">Track Title</h1>
+                    <p><span id="artist-big" class="artist">Artist name</span><span id="album-big" class="album">Album name</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rsidebar">
+        <div class="inner">
+            <ul id="playlist-rightbar">
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-player">
+    <div class="wrapper">
+        <div class="player-control">
+            <ul>
+                <li>
+                    <button id="prev-track-ctrl" onclick="playPrev()">
+                        <i class="ficon icon-to-start"></i>
+                    </button>
+                </li>
+                <li>
+                    <button id="play-track-ctrl" onclick="playPauseToggle()">
+                        <i class="ficon icon-play"></i>
+                    </button>
+                </li>
+                <li>
+                    <button id="next-track-ctrl" onclick="playNext()">
+                        <i class="ficon icon-to-end"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="player-trackinfo">
+            <ul>
+                <li class="details">
+                    <div>
+                        <p id="track-title" class="track-title">Current song name - Artist</p>
+                    </div>
+                    <div class="track-timespan-wrap">
+                        <p id="track-timespan" class="track-timespan">00:00/00:00</p>
+                    </div>
+                </li>
+                <li>
+				<span class="track-progress">
+					<input id="track-slider" type="range" min="0" max="100" step=".1" value="0" data-rangeslider>
+				</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="player-volume">
+            <ul>
+                <li>
+				<span class="track-volume">
+					<input id="track-volume" type="range" min="0" max="1" step=".05" value=".5" data-rangeslider>
+				</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+<canvas id="bg_hero_blur" style="display:none"></canvas>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/rangeslider.min.js"></script>
+<script src="./js/reconnecting-websocket.min.js"></script>
+<script src="./js/StackBlur.js"></script>
+<script>
+    var ctrl_playpause_btn;
+    var current_player_data;
+    var track_slider;
+    var volume_slider;
+    var track_timespan;
+    var canUpdateProgress = true;
+    var wasPlaying = false;
+    var artwork = null;
+    var track_title;
+    var ws = 0;
+    var is_volume_changing = false;
+
+    $(function () {
+        ctrl_playpause_btn = $("#play-track-ctrl");
+        track_slider = $('input[id="track-slider"]');
+        volume_slider = $('input[id="track-volume"]');
+
+        track_timespan = $("#track-timespan");
+        artwork = $("#current-track-artwork");
+        track_title = $("#track-title");
+
+        //Open the websocket for data transfer!
+        startSocket("ws://localhost:1303/");
+
+        //Init track progress slider
+        track_slider.rangeslider({
+            polyfill: false,
+
+            // Default CSS classes
+            rangeClass: 'rangeslider',
+            disabledClass: 'rangeslider--disabled',
+            horizontalClass: 'rangeslider--horizontal',
+            verticalClass: 'rangeslider--vertical',
+            fillClass: 'rangeslider__fill',
+
+            // Callback function
+            onSlideEnd: function (position, value) {
+                canUpdateProgress = true;
+                setProgressPos(value);
+            },
+
+            onSlideBegin: function (position, value) {
+                wasPlaying = (current_player_data.CurrentPlayerState == "Playing") ? true : false;
+                canUpdateProgress = false;
+                pasuePlayer();
+            }
+        });
+
+        //Init VOlumebar slider
+        volume_slider.rangeslider({
+            polyfill: false,
+
+            // Default CSS classes
+            rangeClass: 'rangeslider',
+            disabledClass: 'rangeslider--disabled',
+            horizontalClass: 'rangeslider--horizontal',
+            verticalClass: 'rangeslider--vertical',
+            fillClass: 'rangeslider__fill',
+
+            // Callback function
+            onInit: function () {
+            },
+
+            // Callback function
+            onSlide: function (position, value) {
+                if (is_volume_changing) {
+                    setVolume(value);
+                }
+            },
+
+            // Callback function
+            onSlideEnd: function (position, value) {
+                is_volume_changing = false;
+            },
+
+            onSlideBegin: function (position, value) {
+                is_volume_changing = true;
+            }
+
+        });
+    });
+
+    $("#pull-data").on("click", function () {
+        makeRequest("getnowplaylist");
+    });
+
+    function blurDo() {
+        var bg_blur = document.getElementById("bg_hero_blur");
+        var ctx = bg_blur.getContext("2d");
+        var img = new Image();
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.src = $("#current-track-artwork").attr("src");
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, bg_blur.width, bg_blur.height);// draw image
+            stackBlurCanvasRGB("bg_hero_blur", 0, 0, bg_blur.width, bg_blur.width, 40);
+            var $blurryData = bg_blur.toDataURL();
+            $('#song-info').attr('style', 'background-image: url("' + $blurryData + '");');
+        }
+    }
+
+
+    function startSocket(websocketServerLocation) {
+
+        ws = new ReconnectingWebSocket(websocketServerLocation, ["nowplaying_data"],
+            {reconnectInterval: 2000});
+        ws.onopen = function () {
+            console.log("Websocket connection established");
+        };
+
+        ws.onmessage = function (msg) {
+            notificationCallback(msg.data);
+        };
+
+        ws.onclose = function () {
+            console.log("Websocket connection closed, trying to reconnect... ");
+        };
+    }
+
+    function setVolume(value) {
+        makeRequest("setvol/" + value);
+    }
+
+    function playNext() {
+        makeRequest("playnext");
+    }
+
+    function setProgressPos(pos) {
+        makeRequest("settrackpos/" + pos);
+        //set the player progress position first then resume playing :)
+        if (wasPlaying) {
+            playPauseToggle();
+            wasPlaying = false;
+        }
+    }
+
+    function playPrev() {
+        makeRequest("playprev");
+    }
+
+    function pasuePlayer() {
+        if (current_player_data.CurrentPlayerState == "Playing") {
+            playPauseToggle();
+        }
+    }
+
+    function playPauseToggle() {
+        makeRequest("toggleplay");
+    }
+
+    function playTrack(obj) {
+        if (obj === false) {
+            return;
+        }
+        var data_url = $(obj).attr("data-fileurl");
+        if (data_url === false) {
+            return false;
+        }
+
+
+        makeRequest("playtrack/" + data_url);
+    }
+
+
+    function makeRequest(actionName) {
+        if (actionName === null) {
+            return;
+        }
+
+        if (!ws) {
+            return;
+        }
+
+        console.log("Action: " + actionName);
+        ws.send(actionName);
+
+//        var dataurl = "http://" + window.location["host"] + "/action/" + actionname;
+//        var jqxhr = $.get(dataurl, function () {
+//        })
+//            .done(function (data) {
+//                notificationcallback(data);
+//            })
+//            .fail(function (data) {
+//                console.log("error: " + data);
+//            });
+    }
+
+    //Dynamic function for callback purpose
+    //When we get the data from websocket this callback will update player controls
+    //with latest data
+    function updatePlayerData() {
+        if(current_player_data.HasTrackChanged){
+            $("#title-big").html(current_player_data.CurrentTrackTitle);
+            $("#artist-big").html(current_player_data.CurrentTrackArtist);
+            $("#album-big").html(current_player_data.CurrentTrackAlbum);
+        }
+    }
+
+    function refreshPlayerControl(data) {
+        current_player_data = data;
+        updatePlayerControl(data.CurrentPlayerState, data.CurrentTrackTitle, data.CurrentTrackArtist, data.CurrentVolume);
+        updateProgress(data.CurrentTrackCompleted, data.CurrentTrackSizeReadable, data.CurrentTrackPositionReadable);
+        updatePlayerData();
+        updateArtwork();
+        updateBrowserElem();
+    }
+
+    function SetPlaylistData(data) {
+        var rightbar_playlist = $("#playlist-rightbar");
+        var loved = "<i class='ficon icon-heart'></i>";
+        var notloved = "<i class='ficon icon-heart-empty'></i>";
+        var lovecolor = null;
+        var playinglabel = null;
+
+        rightbar_playlist.html("");
+        $.each(data.Playlist, function (key, value) {
+
+            if (value[5] === "L") {
+                lovecolor = "loved";
+                value[5] = loved;
+            } else {
+                lovecolor = "notloved";
+                value[5] = notloved;
+            }
+
+            if ((current_player_data.CurrentTrackTitle + current_player_data.CurrentTrackArtist) === (value[0] + value[2])) {
+                playinglabel = "playing"
+            } else {
+                playinglabel = "";
+            }
+
+            rightbar_playlist.append(
+                "<li class='" + playinglabel + "' data-fileurl='" + escapeHtml(value[7]) + "' onclick='playTrack(this)'>" +
+                "<span class='title'>" + value[0] + "</span>" +
+                "<span class='artist'>" + value[2] + "</span>" +
+                "<span class='album'>" + value[1] + "</span>" +
+                "<span class='love " + lovecolor + "'>" + value[5] + "</span>" +
+                "</li>"
+            );
+        });
+    }
+
+    var entityMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '/': '&#x2F;',
+        '`': '&#x60;',
+        '=': '&#x3D;'
+    };
+
+    function escapeHtml(string) {
+        return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
+
+    //Update browser title
+    function updateBrowserElem() {
+        $("title").html("MusicBee WebUI | " + current_player_data.CurrentTrackTitle);
+    }
+
+    /**
+     * If the artwork is new ONLY then update it. On the server side we sent a hash of the
+     * current track+artist to determine if the server SHOULD or SHOULD NOT send the artwork, if not we simply
+     * send empty value for the artwork
+     */
+    function updateArtwork() {
+        if (current_player_data.TrackArtwork) {
+            makeRequest("getnowplaylist");
+            setCurrentArtwork(current_player_data.TrackArtwork);
+        }
+    }
+
+    function setCurrentArtwork(url) {
+        artwork.attr("src", url);
+        blurDo();
+    }
+
+    function updatePlayerControl(playstate, trackTitle, trackArtist, curVol) {
+        track_title.html(trackTitle + " - " + trackArtist);
+
+        if (playstate == "Playing") {
+            ctrl_playpause_btn.html("<i class=\"ficon icon-pause\"></i>");
+        } else {
+            ctrl_playpause_btn.html("<i class=\"ficon icon-play\"></i>");
+        }
+
+        if (!is_volume_changing) {
+            volume_slider.val(curVol).change();
+        }
+    }
+
+    function updateProgress(completed, totaltime, curposition) {
+        if (canUpdateProgress) {
+            track_slider.val(completed).change();
+            track_timespan.html(curposition + "/" + totaltime);
+        }
+    }
+
+    //This function executes when an ajax call is finished or failed.
+    //accepts json as a parameter, and provide a function callback provided via json object
+    function notificationCallback(data) {
+        //Check if the json is valid
+        var obj = validateJSON(data);
+        if (obj != false) {
+            //If a callback function is provided, we will call this via notificationFunctionCallback(string func_name) method
+            if (obj.callback_function != null) {
+                callback(obj.callback_function, obj);
+            }
+        } else {
+            console.log("ERROR: " + data);
+        }
+    }
+
+    //create and call the function by it's name
+    function callback(func) {
+        this[func].apply(this, Array.prototype.slice.call(arguments, 1));
+    }
+
+
+    function validateJSON(jsonString) {
+        try {
+            var json = jQuery.parseJSON(jsonString);
+
+            // Handle non-exception-throwing cases:
+            // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+            // but... JSON.parse(null) returns 'null', and typeof null === "object",
+            // so we must check for that, too.
+            if (json && typeof json === "object" && json !== null) {
+                return json;
+            }
+        }
+        catch (e) {
+        }
+        if (typeof jsonString === "object") {
+            return jsonString;
+        }
+
+        return false;
+    }
+</script>
 </body>
 </html>
