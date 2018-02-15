@@ -50,5 +50,6 @@ namespace MusicBeePlugin
 
             return serialized;
         }
-    }
+
+	}
 }

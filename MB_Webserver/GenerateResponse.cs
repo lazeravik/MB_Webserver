@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using WebServer;
 using static MusicBeePlugin.Plugin;
 
@@ -121,7 +123,7 @@ namespace MusicBeePlugin
             data.CurrentTrackPositionReadable = Util.FormattedMills(currentPos);
             data.CurrentTrackAlbum = MbApi.NowPlaying_GetFileTag(MetaDataType.Album);
             data.CurrentTrackGenre = MbApi.NowPlaying_GetFileTag(MetaDataType.Genres);
-            data.TrackArtwork = (TrackChanged || isForcedOnce) ? GetCurrentTrackArtwork() : string.Empty;
+            data.ArtworkPath = (TrackChanged || isForcedOnce) ? GetCurrentTrackArtwork() : string.Empty;
             data.CurrentVolume = MbApi.Player_GetVolume();
 
             var allfile = MbApi.NowPlayingList_QueryGetNextFile();
@@ -148,8 +150,41 @@ namespace MusicBeePlugin
         /// <returns></returns>
         private static string GetCurrentTrackArtwork()
         {
-            return "data:image/png;base64," + MbApi.NowPlaying_GetArtwork();
+			return MbApi.NowPlaying_GetFileUrl();
         }
+
+		public static Stream GetArtwork(string filePath)
+		{
+			var file = TagLib.File.Create(filePath);
+			if (file.Tag.Pictures.Length >= 1)
+			{
+				var bin = file.Tag.Pictures[0].Data.Data;
+
+				//Of course image bytes is set to the bytearray of your image      
+
+				using (MemoryStream ms = new MemoryStream(bin, 0, bin.Length))
+				{
+					using (Image img = Image.FromStream(ms))
+					{
+						int h = 300;
+						int w = 300;
+
+						using (Bitmap b = new Bitmap(img, new Size(w, h)))
+						{
+							using (MemoryStream ms2 = new MemoryStream())
+							{
+								b.Save(ms2, System.Drawing.Imaging.ImageFormat.Jpeg);
+								bin = ms2.ToArray();
+							}
+						}
+					}
+				}
+
+				return new System.IO.MemoryStream(bin);
+			}
+
+			return null;
+		}
 
         public static void GetNowPlaylist()
         {

@@ -9,7 +9,7 @@
         public float CurrentTrackSize { get; set; }
         public float CurrentTrackPosition { get; set; }
         public float CurrentTrackCompleted { get; set; }
-        public string TrackArtwork { get; set; }
+        public string ArtworkPath { get; set; }
         public string CurrentTrackAlbum { get; set; }
         public string CurrentTrackSizeReadable { get; set; }
         public string CurrentTrackPositionReadable { get; set; }

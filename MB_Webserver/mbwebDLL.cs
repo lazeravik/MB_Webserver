@@ -101,8 +101,7 @@ namespace MusicBeePlugin
             {
 
                 case NotificationType.PluginStartup:
-                    MessageBox.Show("Yay");
-                    break;
+					break;
 
                 case NotificationType.TrackChanged:
                     // ...

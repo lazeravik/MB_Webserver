@@ -1,4 +1,5 @@
-﻿using Nancy.Hosting.Self;
+﻿using MusicBeePlugin;
+using Nancy.Hosting.Self;
 using System;
 using System.Threading;
 
@@ -9,6 +10,7 @@ namespace WebServer
         private Thread serverThread = null;
         private NancyHost NancyHost = null;
         private HostConfiguration NancyHostConfig;
+		private NancyBootstrapper NancyBootstrap;
         private int port;
         private bool isRunning;
 
@@ -29,6 +31,7 @@ namespace WebServer
                 UrlReservations = new UrlReservations() { CreateAutomatically = true, },
                 RewriteLocalhost = true,
             };
+			NancyBootstrap = new NancyBootstrapper();
         }
 
 
@@ -57,7 +60,7 @@ namespace WebServer
         {
             isRunning = true;
             string url = string.Format("http://localhost:{0}/", port);
-            NancyHost = new NancyHost(NancyHostConfig, new Uri(url));
+            NancyHost = new NancyHost(NancyBootstrap, NancyHostConfig, new Uri(url));
             NancyHost.Start();
         }
 

@@ -341,6 +341,7 @@
 
             rightbar_playlist.append(
                 "<li class='" + playinglabel + "' data-fileurl='" + escapeHtml(value[7]) + "' onclick='playTrack(this)'>" +
+				"<img src='mimg/"+escapeHtml(value[7])+"'>"+
                 "<span class='title'>" + value[0] + "</span>" +
                 "<span class='artist'>" + value[2] + "</span>" +
                 "<span class='album'>" + value[1] + "</span>" +
@@ -378,9 +379,9 @@
      * send empty value for the artwork
      */
     function updateArtwork() {
-        if (current_player_data.TrackArtwork) {
+        if (current_player_data.ArtworkPath) {
             makeRequest("getnowplaylist");
-            setCurrentArtwork(current_player_data.TrackArtwork);
+            setCurrentArtwork("mimg/"+current_player_data.ArtworkPath);
         }
     }
 

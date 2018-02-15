@@ -177,6 +177,20 @@ nav.menu {
         &.playing{
           box-shadow: inset 7px 0px 0px #8BC34A;
         }
+		
+		img {
+    max-width: 55px;
+    max-height: 55px;
+    float: left;
+    margin-right: 15px;
+}
+
+&::after {
+    content: '';
+    position: relative;
+    display: inline-block;
+    clear: both;
+}
 
         span{
           display: block;

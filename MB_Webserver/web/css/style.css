@@ -135,6 +135,16 @@ nav.menu {
           padding: 10px 10px 10px 20px; }
         .content-wrapper .rsidebar .inner li.playing {
           box-shadow: inset 7px 0px 0px #8BC34A; }
+        .content-wrapper .rsidebar .inner li img {
+          max-width: 55px;
+          max-height: 55px;
+          float: left;
+          margin-right: 15px; }
+        .content-wrapper .rsidebar .inner li::after {
+          content: '';
+          position: relative;
+          display: inline-block;
+          clear: both; }
         .content-wrapper .rsidebar .inner li span {
           display: block;
           max-height: 20px;
@@ -318,3 +328,5 @@ input[type="range"]:focus + .rangeslider .rangeslider__handle {
   -moz-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
   -webkit-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
   box-shadow: 0 0 8px rgba(255, 0, 255, 0.9); }
+
+/*# sourceMappingURL=style.css.map */
