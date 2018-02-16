@@ -38,6 +38,7 @@
                 <div class="trackinfo">
                     <h1 id="title-big" class="track-title">Track Title</h1>
                     <p><span id="artist-big" class="artist">Artist name</span><span id="album-big" class="album">Album name</span></p>
+					<p class="artistinfo" id="artistInfo"></p>
                 </div>
             </div>
         </div>
@@ -303,6 +304,7 @@
             $("#title-big").html(current_player_data.CurrentTrackTitle);
             $("#artist-big").html(current_player_data.CurrentTrackArtist);
             $("#album-big").html(current_player_data.CurrentTrackAlbum);
+			$("#artistInfo").html(current_player_data.ArtistDataset.ArtistInfo);
         }
     }
 

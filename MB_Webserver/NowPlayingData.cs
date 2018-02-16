@@ -16,6 +16,7 @@
         public string CurrentTrackGenre { get; set; }
         public float CurrentVolume { get; set; }
 
+		public ArtistData ArtistDataset { get; set; }
 
         public string[] NowPlayingList { get; set; }
         public string[] NowPlayingListAll { get; set; }

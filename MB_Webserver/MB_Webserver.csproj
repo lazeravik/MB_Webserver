@@ -75,6 +75,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArtistData.cs" />
     <Compile Include="GenerateResponse.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainModule.cs" />

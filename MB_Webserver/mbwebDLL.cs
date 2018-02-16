@@ -18,7 +18,7 @@ namespace MusicBeePlugin
             mbApiInterface.Initialise(apiInterfacePtr);
             about.PluginInfoVersion = PluginInfoVersion;
             about.Name = "MusicBee Webserver";
-            about.Description = "Web interfaces allow users to control and interact with their Kodi installation through a web browser. " +
+            about.Description = "Web ui allow users to control and interact with their MusicBee installation through a web browser. " +
                 "This can be used for a remote control, library management, visual feedback, and many other things.";
             about.Author = "AvikB";
             about.TargetApplication = "";   // current only applies to artwork, lyrics or instant messenger name that appears in the provider drop down selector or target Instant Messenger

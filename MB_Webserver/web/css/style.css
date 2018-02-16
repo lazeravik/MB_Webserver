@@ -41,21 +41,27 @@ nav.menu {
     margin: 0px;
     padding: 0px; }
   nav.menu ul {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     height: 100%; }
     nav.menu ul li {
       list-style: none;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex; }
       nav.menu ul li a {
         padding: 15px;
         display: block;
         text-decoration: none;
         color: #eee;
+        -webkit-transition: linear all .2s;
         transition: linear all .2s; }
         nav.menu ul li a:hover {
           text-decoration: none;
           color: #ff8300;
-          box-shadow: inset 0px -4px 0px 0px #ff8300; }
+          -webkit-box-shadow: inset 0px -4px 0px 0px #ff8300;
+                  box-shadow: inset 0px -4px 0px 0px #ff8300; }
 
 .sidebar {
   background: #f1f1f1;
@@ -65,7 +71,8 @@ nav.menu {
   z-index: 99;
   padding-top: 50px;
   padding-bottom: 70px;
-  box-sizing: border-box; }
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
   .sidebar ul, .sidebar li {
     margin: 0px;
     padding: 0px;
@@ -78,28 +85,40 @@ nav.menu {
       display: block;
       text-decoration: none;
       color: #333;
+      -webkit-transition: linear all .2s;
       transition: linear all .2s;
       width: 100%;
       height: 100%;
       position: absolute;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box; }
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .sidebar ul li a:hover {
         text-decoration: none;
         color: #ff8300;
-        box-shadow: inset 4px 0px 0px 0px #ff8300; }
+        -webkit-box-shadow: inset 4px 0px 0px 0px #ff8300;
+                box-shadow: inset 4px 0px 0px 0px #ff8300; }
 
 .content-wrapper {
   position: absolute;
   padding-left: 55px;
   padding-top: 50px;
   padding-bottom: 70px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   height: 100%;
   width: 100%;
-  box-sizing: border-box; }
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
   .content-wrapper .content {
     background: #ffffff;
     width: 80%; }
@@ -127,14 +146,17 @@ nav.menu {
         border-bottom: 1px solid #3c3c3c;
         font-size: 14px;
         cursor: default;
+        -webkit-transition: linear all .08s;
         transition: linear all .08s;
         position: relative; }
         .content-wrapper .rsidebar .inner li:hover {
           color: #ff8300;
-          box-shadow: inset 7px 0px 0px #ff8300;
+          -webkit-box-shadow: inset 7px 0px 0px #ff8300;
+                  box-shadow: inset 7px 0px 0px #ff8300;
           padding: 10px 10px 10px 20px; }
         .content-wrapper .rsidebar .inner li.playing {
-          box-shadow: inset 7px 0px 0px #8BC34A; }
+          -webkit-box-shadow: inset 7px 0px 0px #8BC34A;
+                  box-shadow: inset 7px 0px 0px #8BC34A; }
         .content-wrapper .rsidebar .inner li img {
           max-width: 55px;
           max-height: 55px;
@@ -174,8 +196,12 @@ nav.menu {
   height: 70px;
   z-index: 100; }
   .bottom-player .wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     position: absolute;
     height: 100%;
     width: 100%; }
@@ -185,14 +211,26 @@ nav.menu {
     list-style: none;
     position: relative; }
   .bottom-player .player-control {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     margin: 0px 40px; }
     .bottom-player .player-control ul {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      align-items: center;
-      justify-content: center; }
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center; }
     .bottom-player .player-control button#play-track-ctrl, .bottom-player .player-control button#prev-track-ctrl, .bottom-player .player-control button#next-track-ctrl {
       background: none;
       border: 0px;
@@ -244,7 +282,10 @@ nav.menu {
   background-size: cover;
   background-position: center center; }
   .song-info .overlay {
+    background: -webkit-gradient(linear, left top, right top, color-stop(0, rgba(0, 0, 0, 0.52)), color-stop(50%, rgba(0, 0, 0, 0.59)), color-stop(80%, rgba(0, 0, 0, 0.57)), to(rgba(51, 51, 51, 0.55)));
     background: linear-gradient(to right, rgba(0, 0, 0, 0.52) 0, rgba(0, 0, 0, 0.59) 50%, rgba(0, 0, 0, 0.57) 80%, rgba(51, 51, 51, 0.55) 100%);
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex; }
   .song-info .trackinfo {
     color: #fff; }
@@ -257,13 +298,21 @@ nav.menu {
       display: inline-block;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 2px; }
+    .song-info .trackinfo .artistinfo {
+      font-size: 15px;
+      max-width: 700px;
+      color: #d4d4d4;
+      line-height: 22px;
+      text-shadow: 1px 1px 2px #000; }
 
 .current-track-artwork {
   max-height: 300px;
   max-width: 300px;
   margin: 30px 30px 30px 40px;
-  box-sizing: border-box;
-  box-shadow: 4px 9px 40px rgba(0, 0, 0, 0.68); }
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-box-shadow: 4px 9px 40px rgba(0, 0, 0, 0.68);
+          box-shadow: 4px 9px 40px rgba(0, 0, 0, 0.68); }
 
 /**
 * Range Slider styling
@@ -293,6 +342,7 @@ nav.menu {
 .rangeslider__fill {
   background: #ff9900;
   position: absolute;
+  -webkit-transition: linear all .2s;
   transition: linear all .2s; }
 
 .rangeslider--horizontal .rangeslider__fill {
@@ -320,13 +370,13 @@ nav.menu {
 
 .rangeslider--vertical .rangeslider__handle {
   top: -5px;
-  touch-action: pan-y;
+  -ms-touch-action: pan-y;
+      touch-action: pan-y;
   margin-left: 15px;
   -ms-touch-action: pan-x; }
 
 input[type="range"]:focus + .rangeslider .rangeslider__handle {
-  -moz-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
   -webkit-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
-  box-shadow: 0 0 8px rgba(255, 0, 255, 0.9); }
+          box-shadow: 0 0 8px rgba(255, 0, 255, 0.9); }
 
 /*# sourceMappingURL=style.css.map */
