@@ -28,13 +28,13 @@ namespace WebServer
 
         public WSServer(int port = 1303)
         {
-            this.port = port;
             allSockets = new List<IWebSocketConnection>();
         }
 
-        public void Start()
+        public void Start(int port = 1303)
         {
-            serverThread = new Thread(new ThreadStart(Run));
+			this.port = port;
+			serverThread = new Thread(new ThreadStart(Run));
             serverThread.Start();
         }
 

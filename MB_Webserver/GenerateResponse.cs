@@ -13,6 +13,9 @@ namespace MusicBeePlugin
 	class GenerateResponse
 	{
 		public static MusicBeeApiInterface MbApi { get; set; }
+
+		private const string LASTFMAPIKEY = "a7fbad25e1b14c126988a52cca42b4c1";
+
 		static NowPlayingData data = null;
 		private static WSServer _wsref;
 
@@ -102,40 +105,50 @@ namespace MusicBeePlugin
 		/// <returns>Serialized json data</returns>
 		public static string GetNowPlayingData(bool isForcedOnce)
 		{
-			float currentPos = MbApi.Player_GetPosition();
-			float totalTime = MbApi.NowPlaying_GetDuration();
-			float completed = currentPos / totalTime * 100;
+			try
+			{
+				float currentPos = MbApi.Player_GetPosition();
+				float totalTime = MbApi.NowPlaying_GetDuration();
+				float completed = currentPos / totalTime * 100;
 
-			if (data == null)
-				data = new NowPlayingData();
+				if (data == null)
+					data = new NowPlayingData();
 
-			string oldHash = Util.CreateMD5(data.CurrentTrackTitle + data.CurrentTrackArtist).ToLower();
-			string curHash = Util.CreateMD5(MbApi.NowPlaying_GetFileTag(MetaDataType.TrackTitle) +
-					MbApi.NowPlaying_GetFileTag(MetaDataType.Artist)).ToLower();
-			bool TrackChanged = (curHash != oldHash);
+				string oldHash = Util.CreateMD5(data.CurrentTrackTitle + data.CurrentTrackArtist).ToLower();
+				string curHash = Util.CreateMD5(MbApi.NowPlaying_GetFileTag(MetaDataType.TrackTitle) +
+						MbApi.NowPlaying_GetFileTag(MetaDataType.Artist)).ToLower();
+				bool TrackChanged = (curHash != oldHash);
 
-			data.HasTrackChanged = (TrackChanged || isForcedOnce);
-			data.CurrentTrackTitle = MbApi.NowPlaying_GetFileTag(MetaDataType.TrackTitle);
-			data.CurrentTrackArtist = MbApi.NowPlaying_GetFileTag(MetaDataType.Artist);
-			data.CurrentPlayerState = MbApi.Player_GetPlayState().ToString();
-			data.CurrentTrackSize = totalTime;
-			data.CurrentTrackPosition = currentPos;
-			data.CurrentTrackCompleted = completed;
-			data.CurrentTrackSizeReadable = Util.FormattedMills(totalTime);
-			data.CurrentTrackPositionReadable = Util.FormattedMills(currentPos);
-			data.CurrentTrackAlbum = MbApi.NowPlaying_GetFileTag(MetaDataType.Album);
-			data.CurrentTrackGenre = MbApi.NowPlaying_GetFileTag(MetaDataType.Genres);
-			data.ArtworkPath = (TrackChanged || isForcedOnce) ? MbApi.NowPlaying_GetFileUrl() : string.Empty;
-			data.CurrentVolume = MbApi.Player_GetVolume();
+				data.HasTrackChanged = (TrackChanged || isForcedOnce);
+				data.CurrentTrackTitle = MbApi.NowPlaying_GetFileTag(MetaDataType.TrackTitle);
+				data.CurrentTrackArtist = MbApi.NowPlaying_GetFileTag(MetaDataType.Artist);
+				data.CurrentPlayerState = MbApi.Player_GetPlayState().ToString();
+				data.CurrentTrackSize = totalTime;
+				data.CurrentTrackPosition = currentPos;
+				data.CurrentTrackCompleted = completed;
+				data.CurrentTrackSizeReadable = Util.FormattedMills(totalTime);
+				data.CurrentTrackPositionReadable = Util.FormattedMills(currentPos);
+				data.CurrentTrackAlbum = MbApi.NowPlaying_GetFileTag(MetaDataType.Album);
+				data.CurrentTrackGenre = MbApi.NowPlaying_GetFileTag(MetaDataType.Genres);
+				data.ArtworkPath = (TrackChanged || isForcedOnce) ? MbApi.NowPlaying_GetFileUrl() : string.Empty;
+				data.CurrentVolume = MbApi.Player_GetVolume();
 
-			var allfile = MbApi.NowPlayingList_QueryGetNextFile();
-			data.NextQueueTrack = allfile;
+				var allfile = MbApi.NowPlayingList_QueryGetNextFile();
+				data.NextQueueTrack = allfile;
 
-			data.ArtistDataset = (TrackChanged || isForcedOnce) ? GetArtistData(MbApi.NowPlaying_GetFileTag(MetaDataType.Artist)) : new ArtistData();
+				data.ArtistDataset = (TrackChanged || isForcedOnce) ? GetArtistData(MbApi.NowPlaying_GetFileTag(MetaDataType.Artist)) : new ArtistData();
 
-			data.callback_function = "refreshPlayerControl";
+				data.callback_function = "refreshPlayerControl";
 
-			return Util.Serialize(data);
+				return Util.Serialize(data);
+			}
+			catch (Exception)
+			{
+				
+			}
+
+			return string.Empty;
+
 		}
 
 		private static void SetPlayerTrackPos(float pos)
@@ -243,18 +256,22 @@ namespace MusicBeePlugin
 		}
 
 
+		/// <summary>
+		/// Gets artist data such as biodata summery
+		/// </summary>
+		/// <param name="artistName"></param>
+		/// <returns></returns>
 		private static ArtistData GetArtistData(string artistName)
 		{
 			using (WebClient client = new WebClient())
 			{
 				try
 				{
-
 					string url = string.Format("http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist={0}&api_key={1}&format=xml",
 										Uri.EscapeUriString(artistName),
-										"a7fbad25e1b14c126988a52cca42b4c1");
+										LASTFMAPIKEY);
+					client.Encoding = System.Text.Encoding.UTF8;
 					string xmlString = client.DownloadString(url);
-
 					if (!string.IsNullOrEmpty(xmlString))
 					{
 
@@ -267,13 +284,11 @@ namespace MusicBeePlugin
 						};
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					return new ArtistData() { ArtistInfo = "No artist info found" };
 				}
-
 			}
-
 			return null;
 		}
 	}

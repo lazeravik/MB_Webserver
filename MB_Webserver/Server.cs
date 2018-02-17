@@ -23,9 +23,8 @@ namespace WebServer
             get { return isRunning; }
         }
 
-        public Server(int port = 1502)
+        public Server()
         {
-            this.port = port;
             NancyHostConfig = new HostConfiguration()
             {
                 UrlReservations = new UrlReservations() { CreateAutomatically = true, },
@@ -35,9 +34,10 @@ namespace WebServer
         }
 
 
-        public void Start()
+        public void Start(int port = 1502)
         {
-            serverThread = new Thread(new ThreadStart(Run));
+			this.port = port;
+			serverThread = new Thread(new ThreadStart(Run));
             serverThread.Start();
         }
 

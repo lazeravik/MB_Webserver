@@ -5,46 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MusicBeePlugin"
         mc:Ignorable="d"
-        Title="MusicBee Webserver" Height="250" Width="410.127" Closing="serverWindowClosing" ResizeMode="CanMinimize" Background="{x:Null}" MouseLeftButtonDown="MoveWindow">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary 
+        Title="MusicBee Webserver" Height="210.667" Width="332.127" Closing="ServerWindowClosing" ResizeMode="CanMinimize" Background="{x:Null}" MouseLeftButtonDown="MoveWindow">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary 
                   Source="Styles.xaml">
-                </ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
+				</ResourceDictionary>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
 
-    <Grid Margin="0">
-        <Grid Height="57" VerticalAlignment="Top">
-            <Grid.Background>
-                <LinearGradientBrush EndPoint="1,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                    <GradientStop Color="#FF1F1F1F" Offset="0.254"/>
-                    <GradientStop Color="#FF191919" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Grid x:Name="notRunningIndicator" HorizontalAlignment="Right" Width="102">
-                <Border BorderBrush="#FFA2A2A2" BorderThickness="1" Height="21" CornerRadius="100" Background="#FF323232" Margin="0,18" HorizontalAlignment="Left" Width="21"/>
-                <Label Content="Not Running" VerticalContentAlignment="Center" Margin="21,0,0,0" Foreground="#FF7E7E7E"/>
-            </Grid>
-            <Grid x:Name="runningIndicator" HorizontalAlignment="Right" Width="102" d:IsHidden="True">
-                <Border BorderBrush="White" BorderThickness="1" Height="21" CornerRadius="100" Background="#FF00A800" Margin="0,18" HorizontalAlignment="Left" Width="21"/>
-                <Label Content="Running" VerticalContentAlignment="Center" Margin="21,0,0,0" Foreground="#FF7E7E7E"/>
-            </Grid>
-            <Button x:Name="StartSrever" Content="Start Server" Margin="10,10,0,0" VerticalAlignment="Top" Height="37" Click="StartSrever_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0" Style="{DynamicResource HeroButtonStyle}" Foreground="White" BorderBrush="{x:Null}" HorizontalAlignment="Left" Width="102" />
-            <Button x:Name="toggleSettingsBtn" Content="Settings" HorizontalAlignment="Left" Height="37" Margin="125,10,0,0" VerticalAlignment="Top" Width="96" Click="toggleSettingsBtn_Click" BorderThickness="0" Foreground="White" Style="{DynamicResource NormalButtonStyle}"/>
-        </Grid>
-        <Border Margin="0,57,0,0" BorderThickness="0,1,0,0" BorderBrush="#FF383838" >
-            <Grid Background="#FF232323">
-                <Label Content="HTTP Port:" HorizontalAlignment="Left" Margin="10,45,0,0" Width="92" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
-                <Button Content="Save" Margin="0,0,10,10" BorderThickness="0" Foreground="White" Style="{DynamicResource NormalButtonStyle}" HorizontalAlignment="Right" Width="86" Height="33" VerticalAlignment="Bottom"/>
-                <TextBox x:Name="portInput" HorizontalAlignment="Left" Height="33" Margin="181,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="64" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0,0,0" Background="#FF1F1F1F" Foreground="#FFE8E8E8" BorderBrush="#FF424242"/>
-                <Label Content="Socket Port:" HorizontalAlignment="Left" Margin="10,83,0,0" Width="92" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
-                <TextBox x:Name="portInput_Copy" HorizontalAlignment="Left" Height="33" Margin="181,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="64" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0,0,0" Background="#FF1F1F1F" Foreground="#FFE8E8E8" BorderBrush="#FF424242"/>
-                <Label Content="Run when MusicBee starts" HorizontalAlignment="Left" Margin="10,10,0,0" Width="156" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
-                <CheckBox Content="" HorizontalAlignment="Left" Margin="181,19,0,0" VerticalAlignment="Top" Width="18"/>
-            </Grid>
-        </Border>
-    </Grid>
+	<Grid Margin="0">
+		<Border BorderThickness="0,1,0,0" BorderBrush="#FF383838" >
+			<Grid Background="#FF232323" Margin="0,-1,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="135*"/>
+					<ColumnDefinition Width="52*"/>
+				</Grid.ColumnDefinitions>
+				<Label Content="HTTP Port:" HorizontalAlignment="Left" Margin="10,45,0,0" Width="92" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
+				<Button x:Name="saveSettingBtn" Content="Save &amp; Restart Server" Margin="10,0,0,10" BorderThickness="0" Foreground="White" Style="{DynamicResource NormalButtonStyle}" Height="33" VerticalAlignment="Bottom" Click="SaveSettingBtn_Click" HorizontalAlignment="Left" Width="146"/>
+				<TextBox x:Name="portInput" HorizontalAlignment="Left" Height="33" Margin="0,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="64" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0,0,0" Background="#FF1F1F1F" Foreground="#FFE8E8E8" BorderBrush="#FF424242" Grid.Column="1"/>
+				<Label Content="Socket Port:" HorizontalAlignment="Left" Margin="10,83,0,0" Width="92" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
+				<TextBox x:Name="wsInput" HorizontalAlignment="Left" Height="33" Margin="0,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="64" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0,0,0" Background="#FF1F1F1F" Foreground="#FFE8E8E8" BorderBrush="#FF424242" Grid.Column="1"/>
+				<Label Content="Run when MusicBee starts" HorizontalAlignment="Left" Margin="10,10,0,0" Width="156" Padding="5" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFC7C7C7" Height="33" VerticalAlignment="Top"/>
+				<CheckBox x:Name="runOnStartup_checkbox" Content="" HorizontalAlignment="Left" Margin="0,19,0,0" VerticalAlignment="Top" Width="18" Grid.Column="1" Height="15"/>
+			</Grid>
+		</Border>
+	</Grid>
 </Window>

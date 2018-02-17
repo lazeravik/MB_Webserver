@@ -9,10 +9,12 @@ namespace MusicBeePlugin
     {
         private static MusicBeeApiInterface mbApiInterface;
         private PluginInfo about = new PluginInfo();
-        private Server server = new Server();
         private MainWindow serverWindow = null;
 
-        public PluginInfo Initialise(IntPtr apiInterfacePtr)
+		private Server httpServer;
+		private WSServer wsServer;
+
+		public PluginInfo Initialise(IntPtr apiInterfacePtr)
         {
             mbApiInterface = new MusicBeeApiInterface();
             mbApiInterface.Initialise(apiInterfacePtr);
@@ -31,29 +33,53 @@ namespace MusicBeePlugin
             about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
 
-            InitMenu();
+            Init();
             GenerateResponse.MbApi = mbApiInterface;
 
             return about;
         }
 
-        private void InitMenu()
+        private void Init()
         {
             mbApiInterface.MB_AddMenuItem("mnuTools/Webserver", "MusicBee Webserver", OpenServerWindow);
-        }
+
+			//Create server instances!
+			httpServer = new Server();
+			wsServer = new WSServer();
+		}
 
         private void OpenServerWindow(object sender, EventArgs e)
         {
-            serverWindow = new MainWindow(server);
+            serverWindow = new MainWindow(this);
 
             //Fixes the WPF running from winform textinput issue
             System.Windows.Forms.Integration.ElementHost.EnableModelessKeyboardInterop(serverWindow);
             serverWindow.Show();
         }
 
-        #region MusicBee plugin internal
 
-        public bool Configure(IntPtr panelHandle)
+		private void StartServer()
+		{
+			httpServer.Start(Int16.Parse(Properties.Settings.Default.httpPort));
+			wsServer.Start(Int16.Parse(Properties.Settings.Default.wsPort));
+		}
+
+		public void RestartServer()
+		{
+			StopServer();
+			StartServer();
+		}
+
+
+		private void StopServer()
+		{
+			httpServer.Stop();
+			wsServer.Stop();
+		}
+
+		#region MusicBee plugin internal
+
+		public bool Configure(IntPtr panelHandle)
         {
             // save any persistent settings in a sub-folder of this path
             string dataPath = mbApiInterface.Setting_GetPersistentStoragePath();
@@ -85,7 +111,9 @@ namespace MusicBeePlugin
         // MusicBee is closing the plugin (plugin is being disabled by user or MusicBee is shutting down)
         public void Close(PluginCloseReason reason)
         {
-        }
+			StopServer();
+
+		}
 
         // uninstall this plugin - clean up any persisted files
         public void Uninstall()
@@ -99,8 +127,9 @@ namespace MusicBeePlugin
             // perform some action depending on the notification type
             switch (type)
             {
-
                 case NotificationType.PluginStartup:
+					//Start the server on start
+					StartServer();
 					break;
 
                 case NotificationType.TrackChanged:

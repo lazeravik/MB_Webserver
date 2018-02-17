@@ -21,14 +21,13 @@
 </nav>
 <div class="sidebar collapsed">
     <ul>
-        <li><a href="#"><i class="ficon icon-note-beamed"></i></a></li>
-        <li><a href="#"><i class="ficon icon-doc-text-inv"></i></a></li>
-        <li><a href="#"><i class="ficon icon-thumbs-up"></i></a></li>
-        <li><a href="#"><i class="ficon icon-tools"></i></a></li>
+        <li><a id="nowplaying_mnu" class="selected" href="#/now-playing/"><i class="ficon icon-play"></i></a></li>
+        <li><a id="library_mnu" href="#/library/"><i class="ficon icon-note-beamed"></i></a></li>
+        <li><a id="setting_mnu" href="#/settings/"><i class="ficon icon-tools"></i></a></li>
     </ul>
 </div>
 
-<div class="content-wrapper">
+<div class="content-wrapper" id="content-bg">
     <div class="content">
         <div class="song-info" id="song-info">
             <div class="overlay">
@@ -109,6 +108,7 @@
 <script src="./js/rangeslider.min.js"></script>
 <script src="./js/reconnecting-websocket.min.js"></script>
 <script src="./js/StackBlur.js"></script>
+<script src="js/jquery.route32.js"></script>
 <script>
     var ctrl_playpause_btn;
     var current_player_data;
@@ -121,6 +121,46 @@
     var track_title;
     var ws = 0;
     var is_volume_changing = false;
+
+    var nowplaying_mnubtn;
+    var library_mnubtn;
+    var setting_mnubtn;
+
+    $(document).ready(function(){
+        nowplaying_mnubtn = $("#nowplaying_mnu");
+        library_mnubtn = $("#library_mnu");
+        setting_mnubtn = $("#setting_mnu");
+
+        var router = new Route32({
+            'automatic':true
+        });
+
+        router.add('#/now-playing/',function(){
+            clearNavigation();
+            nowplaying_mnubtn.addClass("selected");
+        });
+
+        router.add('#/library/',function(){
+            clearNavigation();
+            library_mnubtn.addClass("selected");
+        });
+
+        router.add('#/settings/',function(){
+            clearNavigation();
+            setting_mnubtn.addClass("selected");
+        });
+
+        router.drive();
+    });
+
+
+    function clearNavigation()
+    {
+        nowplaying_mnubtn.removeClass("selected");
+        library_mnubtn.removeClass("selected");
+        setting_mnubtn.removeClass("selected");
+    }
+
 
     $(function () {
         ctrl_playpause_btn = $("#play-track-ctrl");
@@ -206,7 +246,7 @@
             ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, bg_blur.width, bg_blur.height);// draw image
             stackBlurCanvasRGB("bg_hero_blur", 0, 0, bg_blur.width, bg_blur.width, 40);
             var $blurryData = bg_blur.toDataURL();
-            $('#song-info').attr('style', 'background-image: url("' + $blurryData + '");');
+            $('#content-bg').attr('style', 'background-image: url("' + $blurryData + '");');
         }
     }
 
