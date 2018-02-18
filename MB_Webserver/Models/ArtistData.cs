@@ -1,4 +1,4 @@
-﻿namespace MusicBeePlugin
+﻿namespace MusicBeePlugin.Models
 {
 	class ArtistData
 	{

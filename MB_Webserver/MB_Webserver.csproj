@@ -81,17 +81,18 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArtistData.cs" />
+    <Compile Include="Models\ArtistData.cs" />
     <Compile Include="GenerateResponse.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainModule.cs" />
-    <Compile Include="Mathf.cs" />
+    <Compile Include="Models\TrackData.cs" />
+    <Compile Include="Utils\Mathf.cs" />
     <Compile Include="mbwebDLL.cs" />
-    <Compile Include="MIMEAssistant.cs" />
+    <Compile Include="Utils\MIMEAssistant.cs" />
     <Compile Include="MusicBeeInterface.cs" />
     <Compile Include="NancyBootstrapper.cs" />
-    <Compile Include="NowPlayingData.cs" />
-    <Compile Include="PlaylistData.cs" />
+    <Compile Include="Models\NowPlayingData.cs" />
+    <Compile Include="Models\PlaylistData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,12 +106,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Server.cs" />
+    <Compile Include="Models\SimilarArtists.cs" />
     <Compile Include="TestControl.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="Utils\Util.cs" />
     <Compile Include="WSServer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -128,11 +130,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainWindow.xaml">
+    <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles.xaml">
+    <Page Include="UI\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

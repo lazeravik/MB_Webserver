@@ -1,8 +1,10 @@
-﻿using System;
+﻿using MusicBeePlugin.Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using WebServer;
@@ -61,6 +63,9 @@ namespace MusicBeePlugin
 					GetNowPlaylist();
 					break;
 
+				case "queryFiles":
+					QueryFiles();
+					break;
 
 				default:
 					break;
@@ -89,10 +94,86 @@ namespace MusicBeePlugin
 							PlayPlaylistTrack(value);
 							break;
 
+						case "getSimilarArtist":
+							GetSimilarArtists(value);
+							break;
+
+						case "queryFiles":
+							QueryFiles(value);
+							break;
+
 						default:
 							break;
 					}
 				}
+			}
+		}
+
+		public static Stream GetCurrentArtwork()
+		{
+			return GetArtwork(MbApi.NowPlaying_GetFileUrl());
+		}
+
+		private static void GetSimilarArtists(string value)
+		{
+			try
+			{
+				SimilarArtists similarArtistList = new SimilarArtists();
+				similarArtistList.Data = MbApi.Library_QuerySimilarArtists(value, 0.2).Split('\u0000');
+				similarArtistList.callback_function = "updateSimilarArtistList";
+
+				WsRef.SendMessage(Util.Serialize(similarArtistList));
+			}
+			catch (Exception){ }
+		}
+
+		private static void QueryFiles(string query = "")
+		{
+			try
+			{
+				string[] allFiles = { };
+				MbApi.Library_QueryFilesEx(query, ref allFiles);
+				MetaDataType[] fields = {
+					MetaDataType.Album,
+					MetaDataType.AlbumArtist,
+					MetaDataType.Artist,
+					MetaDataType.TrackNo,
+					MetaDataType.Rating
+				};
+
+				List<TrackData> allTrackData= new List<TrackData>();
+
+				for (int i = 0; i < allFiles.Length; i++)
+				{
+					string[] fileTags = { };
+					MbApi.Library_GetFileTags(allFiles[i], fields, ref fileTags);
+
+					allTrackData.Add(new TrackData()
+					{
+						FilePath = allFiles[i],
+						Album = fileTags[0],
+						AlbumArtist = fileTags[1],
+						Artist = fileTags[2],
+						TrackNo = fileTags[3],
+						Rating = fileTags[4],
+					});
+				}
+
+				var GroupedTrackList = allTrackData.GroupBy(t => new { t.Album, t.AlbumArtist }).Select(
+					albm => new AlbumData() {
+						Album = albm.Key.Album,
+						AlbumArtist = albm.Key.AlbumArtist,
+						TrackList = albm.ToList(),
+					}).ToList();
+
+				AlbumList trackLists = new AlbumList() { callback_function = "fileQueryComplete", AlbumLists = GroupedTrackList };
+
+
+				WsRef.SendMessage(Util.Serialize(trackLists));
+			}
+			catch (Exception e)
+			{
+				throw e;
 			}
 		}
 
@@ -142,13 +223,8 @@ namespace MusicBeePlugin
 
 				return Util.Serialize(data);
 			}
-			catch (Exception)
-			{
-				
-			}
-
+			catch (Exception) { }
 			return string.Empty;
-
 		}
 
 		private static void SetPlayerTrackPos(float pos)
@@ -165,7 +241,7 @@ namespace MusicBeePlugin
 		/// <returns>Stream</returns>
 		public static Stream GetArtwork(string filePath)
 		{
-			var file = TagLib.File.Create(filePath);
+			var file = TagLib.File.Create(filePath.Replace(".jpg", ""));
 			if (file.Tag.Pictures.Length >= 1)
 			{
 				var bin = file.Tag.Pictures[0].Data.Data;

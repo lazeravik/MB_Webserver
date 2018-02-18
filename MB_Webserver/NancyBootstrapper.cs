@@ -3,6 +3,9 @@ using Nancy.Conventions;
 using System;
 using System.IO;
 using Nancy.Responses;
+using System.Resources;
+using Response.Properties;
+using System.Threading.Tasks;
 
 namespace MusicBeePlugin
 {
@@ -16,7 +19,7 @@ namespace MusicBeePlugin
 		protected override void ConfigureConventions(NancyConventions nancyConventions)
 		{
 			base.ConfigureConventions(nancyConventions);
-			nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("static","F:/Onedrive/Music"));
+			//nancyConventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("static","F:/Onedrive/Music"));
 		}
 	}
 
@@ -32,7 +35,7 @@ namespace MusicBeePlugin
 	{
 		public static Nancy.Response AsStream(this IResponseFormatter formatter, Func<Stream> readStream, string contentType)
 		{
-			return new StreamResponse(readStream, contentType);
+			return  new StreamResponse(readStream, contentType);
 		}
 	}
 

@@ -30,6 +30,11 @@ namespace MusicBeePlugin
                 return Response.AsImage(string.Format("./img/{0}", (string)x.name));
             };
 
+			Get[@"/currentArtwork.jpg"] = x =>
+			{
+				return Response.AsStream(() => GenerateResponse.GetCurrentArtwork(), "image/*");
+			};
+
 			Get[@"/mimg/{path*}"] = x =>
 			{
 				return Response.AsStream(() => GenerateResponse.GetArtwork((string)x.path), "image/*");
