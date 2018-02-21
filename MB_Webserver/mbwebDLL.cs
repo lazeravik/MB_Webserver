@@ -124,20 +124,20 @@ namespace MusicBeePlugin
         // you need to set about.ReceiveNotificationFlags = PlayerEvents to receive all notifications, and not just the startup event
         public void ReceiveNotification(string sourceFileUrl, NotificationType type)
         {
-            // perform some action depending on the notification type
-            switch (type)
-            {
-                case NotificationType.PluginStartup:
+			// perform some action depending on the notification type
+			switch (type)
+			{
+				case NotificationType.PluginStartup:
 					//Start the server on start
 					StartServer();
 					break;
 
-                case NotificationType.TrackChanged:
-                    // ...
-                    break;
+				case NotificationType.TrackChanged:
+					// ...
+					break;
 
-                case NotificationType.NowPlayingListChanged:
-                    GenerateResponse.GetNowPlaylist();
+				case NotificationType.NowPlayingListChanged:
+					wsServer.SendMessage("{\"callback_function\": \"updatePlaylistData\"} ");
                     break;
             }
         }

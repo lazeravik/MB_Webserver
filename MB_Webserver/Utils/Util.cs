@@ -51,5 +51,17 @@ namespace MusicBeePlugin
             return serialized;
         }
 
+		public static string Encode64(string source)
+		{
+			var encodedString = Convert.ToBase64String(Encoding.UTF8.GetBytes(source));
+			return encodedString;
+		}
+
+		public static string Decode64(string source)
+		{
+			var base64EncodedBytes = Convert.FromBase64String(source.Replace(' ', '+'));
+			return Encoding.UTF8.GetString(base64EncodedBytes);
+		}
+
 	}
 }

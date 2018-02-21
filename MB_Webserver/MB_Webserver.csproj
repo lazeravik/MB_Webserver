@@ -81,6 +81,8 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="htmlGenerator\IhtmlGenerator.cs" />
+    <Compile Include="htmlGenerator\NowplayinglistGenerator.cs" />
     <Compile Include="Models\ArtistData.cs" />
     <Compile Include="GenerateResponse.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -92,7 +94,6 @@
     <Compile Include="MusicBeeInterface.cs" />
     <Compile Include="NancyBootstrapper.cs" />
     <Compile Include="Models\NowPlayingData.cs" />
-    <Compile Include="Models\PlaylistData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -123,6 +124,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="web\style.scss" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -145,14 +147,27 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Resource Include="web\favicon.ico" />
+    <Content Include="web\css\jquery.contextMenu.min.css" />
+    <Content Include="web\js\blazy.min.js" />
+    <Content Include="web\js\jquery.contextMenu.min.js" />
+    <Content Include="web\js\jquery.min.js" />
+    <Content Include="web\js\jquery.route32.js" />
+    <Content Include="web\js\jquery.ui.position.min.js" />
+    <Content Include="web\js\md5.js" />
+    <Content Include="web\js\rangeslider.min.js" />
+    <Content Include="web\js\reconnecting-websocket.min.js" />
+    <Content Include="web\js\StackBlur.js" />
     <None Include="FodyWeavers.xml" />
-    <Content Include="web\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="web\css\fontello-embedded.css" />
+    <Content Include="web\css\style.css" />
+    <Resource Include="web\img\artwork-default.png" />
+    <Content Include="web\index.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)\*.*" "C:\Users\AvikB\AppData\Roaming\MusicBee\Plugins"</PostBuildEvent>
+    <PostBuildEvent>copy /Y "$(TargetDir)\*.*" "C:\Users\AvikB\AppData\Roaming\MusicBee\Plugins"
+xcopy "$(ProjectDir)\web\*.*" "C:\Users\AvikB\AppData\Roaming\MusicBee\Plugins\web" /Y/D/E</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

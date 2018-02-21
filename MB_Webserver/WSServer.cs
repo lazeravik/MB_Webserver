@@ -75,6 +75,7 @@ namespace WebServer
             isRunning = true;
             socketServer = new WebSocketServer(string.Format("ws://0.0.0.0:{0}", port));
             socketServer.ListenerSocket.NoDelay = true;
+			socketServer.RestartAfterListenError = true;
             socketServer.SupportedSubProtocols = new[] { "nowplaying_data" };
 
             wsThread = new Thread(new ThreadStart(RunTask));

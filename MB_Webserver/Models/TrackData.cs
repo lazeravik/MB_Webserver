@@ -10,6 +10,8 @@ namespace MusicBeePlugin.Models
 		public string TrackNo { get; internal set; }
 		public string Rating { get; internal set; }
 		public string FilePath { get; internal set; }
+		public string TrackTitle { get; set; }
+		public string Loved { get; set; }
 	}
 
 	class AlbumData

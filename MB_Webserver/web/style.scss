@@ -475,3 +475,58 @@ input[type="range"]:focus + .rangeslider .rangeslider__handle {
   box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
 }
 
+.b-lazy {
+	opacity: 0;
+}
+
+.b-lazy.b-loaded {
+	opacity: 1;
+}
+
+
+.context-menu-list {
+	position: absolute;
+	display: inline-block;
+	min-width: 13em;
+	max-width: 26em;
+	padding: .25em 0;
+	margin: .3em;
+	font-family: inherit;
+	font-size: inherit;
+	list-style-type: none;
+	background: #202020;
+	border: 1px solid #3b3b3b;
+	border-radius: 0;
+	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.76);
+}
+
+.context-menu-item {
+	position: relative;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	padding: .5em 2em;
+	color: #ececec;
+	user-select: none;
+	font-family: lato;
+	font-size: 14px;
+	background: none;
+
+	&.context-menu-hover {
+		color: #fff;
+		cursor: pointer;
+		background-color: #333;
+	}
+
+	&.context-menu-separator {
+		padding: 0;
+		margin: 5px;
+		border-bottom: 1px solid #3e3e3e;
+	}
+
+	.context-menu-submenu::after {
+		border-color: transparent transparent transparent #6b6b6b;
+		border-style: solid;
+		border-width: .4em 0 .4em .4em;
+	}
+}

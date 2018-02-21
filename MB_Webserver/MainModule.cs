@@ -1,11 +1,10 @@
-﻿using Nancy;
-using System;
-using System.IO;
+﻿using MusicBeePlugin.htmlGenerator;
+using Nancy;
 using static MusicBeePlugin.Plugin;
 
 namespace MusicBeePlugin
 {
-    public class MainModule : NancyModule
+	public class MainModule : NancyModule
     {
         public static MusicBeeApiInterface MbApi { get; set; }
 
@@ -37,7 +36,26 @@ namespace MusicBeePlugin
 
 			Get[@"/mimg/{path*}"] = x =>
 			{
-				return Response.AsStream(() => GenerateResponse.GetArtwork((string)x.path), "image/*");
+				return Response.AsStream(() => GenerateResponse.GetArtwork(
+					Util.Decode64(((string)x.path).Replace(".jpg", "")), 40, 40), "image/*");
+			};
+
+			Get[@"/queryfiles/{query}"] = q =>
+			{
+				return Response.AsJson(GenerateResponse.QueryFiles(), HttpStatusCode.OK);
+			};
+
+			Get[@"/html/nowplayinglist"] = q =>
+			{
+				return Response.AsText(new NowplayinglistGenerator(
+					GenerateResponse.GetNowPlaylist()).GetGeneratedResponse(), "text/html");
+			};
+
+			Get[@"/play/file/{track}"] = q =>
+			{
+				var trackPath = Util.Decode64(q.track);
+				GenerateResponse.PlayTrack(trackPath);
+				return Response.AsText((string)trackPath);
 			};
 
 		}

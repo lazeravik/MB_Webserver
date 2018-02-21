@@ -25,7 +25,8 @@ html, body {
   font-family: 'Lato', sans-serif; }
 
 body {
-  display: block; }
+  display: block;
+  background: #333333; }
 
 h1 {
   font-weight: 300; }
@@ -64,7 +65,7 @@ nav.menu {
                   box-shadow: inset 0px -4px 0px 0px #ff8300; }
 
 .sidebar {
-  background: #f1f1f1;
+  background: rgba(0, 0, 0, 0.75);
   height: 100%;
   position: fixed;
   width: 55px;
@@ -84,7 +85,7 @@ nav.menu {
       padding: 15px;
       display: block;
       text-decoration: none;
-      color: #333;
+      color: #fff;
       -webkit-transition: linear all .2s;
       transition: linear all .2s;
       width: 100%;
@@ -106,6 +107,11 @@ nav.menu {
         color: #ff8300;
         -webkit-box-shadow: inset 4px 0px 0px 0px #ff8300;
                 box-shadow: inset 4px 0px 0px 0px #ff8300; }
+      .sidebar ul li a.selected {
+        text-decoration: none;
+        color: #ff8300;
+        -webkit-box-shadow: inset 4px 0px 0px 0px #ff8300;
+                box-shadow: inset 4px 0px 0px 0px #ff8300; }
 
 .content-wrapper {
   position: absolute;
@@ -118,19 +124,21 @@ nav.menu {
   height: 100%;
   width: 100%;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box; }
+          box-sizing: border-box;
+  background-size: cover;
+  background-position: center center; }
   .content-wrapper .content {
-    background: #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.67)), to(rgba(0, 0, 0, 0.66)));
+    background: linear-gradient(rgba(0, 0, 0, 0.67), rgba(0, 0, 0, 0.66));
     width: 80%; }
   .content-wrapper .rsidebar {
-    background-color: #272727;
+    background-color: rgba(0, 0, 0, 0.83);
     position: relative;
     display: block;
     width: 400px;
-    border-top: 1px solid #424242;
-    border-bottom: 1px solid #424242;
     overflow-x: hidden;
-    overflow-y: auto; }
+    overflow-y: auto;
+    border-left: 3px solid rgba(255, 255, 255, 0.09); }
     .content-wrapper .rsidebar .inner {
       position: absolute;
       top: 0px;
@@ -158,6 +166,7 @@ nav.menu {
           -webkit-box-shadow: inset 7px 0px 0px #8BC34A;
                   box-shadow: inset 7px 0px 0px #8BC34A; }
         .content-wrapper .rsidebar .inner li img {
+          min-width: 55px;
           max-width: 55px;
           max-height: 55px;
           float: left;
@@ -278,32 +287,33 @@ nav.menu {
       right: 0px;
       display: table; }
 
-.song-info {
-  background-size: cover;
-  background-position: center center; }
-  .song-info .overlay {
-    background: -webkit-gradient(linear, left top, right top, color-stop(0, rgba(0, 0, 0, 0.52)), color-stop(50%, rgba(0, 0, 0, 0.59)), color-stop(80%, rgba(0, 0, 0, 0.57)), to(rgba(51, 51, 51, 0.55)));
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.52) 0, rgba(0, 0, 0, 0.59) 50%, rgba(0, 0, 0, 0.57) 80%, rgba(51, 51, 51, 0.55) 100%);
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex; }
-  .song-info .trackinfo {
-    color: #fff; }
-    .song-info .trackinfo .track-title {
-      margin: 30px 10px 10px 0px; }
-    .song-info .trackinfo .artist {
-      margin-right: 20px;
-      padding: 7px 10px;
-      border: 1px solid #9a9a9a;
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 2px; }
-    .song-info .trackinfo .artistinfo {
-      font-size: 15px;
-      max-width: 700px;
-      color: #d4d4d4;
-      line-height: 22px;
-      text-shadow: 1px 1px 2px #000; }
+.song-info .overlay {
+  background: linear-gradient(150deg, rgba(0, 0, 0, 0.52) 0, rgba(0, 0, 0, 0.59) 30%, rgba(0, 0, 0, 0.57) 30%, rgba(51, 51, 51, 0.55) 100%);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
+.song-info .trackinfo {
+  color: #fff; }
+  .song-info .trackinfo .track-title {
+    margin: 30px 10px 10px 0px; }
+  .song-info .trackinfo .artist {
+    margin-right: 20px;
+    padding: 7px 10px;
+    border: 1px solid #9a9a9a;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px; }
+  .song-info .trackinfo .artistinfo {
+    font-size: 15px;
+    max-width: 700px;
+    color: #d4d4d4;
+    line-height: 22px;
+    text-shadow: 1px 1px 2px #000;
+    margin-right: 30px; }
+    .song-info .trackinfo .artistinfo a {
+      color: #c6f9ff; }
+      .song-info .trackinfo .artistinfo a:hover {
+        color: #ffffff; }
 
 .current-track-artwork {
   max-height: 300px;
@@ -379,4 +389,50 @@ input[type="range"]:focus + .rangeslider .rangeslider__handle {
   -webkit-box-shadow: 0 0 8px rgba(255, 0, 255, 0.9);
           box-shadow: 0 0 8px rgba(255, 0, 255, 0.9); }
 
-/*# sourceMappingURL=style.css.map */
+.b-lazy {
+  opacity: 0; }
+
+.b-lazy.b-loaded {
+  opacity: 1; }
+
+.context-menu-list {
+  position: absolute;
+  display: inline-block;
+  min-width: 13em;
+  max-width: 26em;
+  padding: .25em 0;
+  margin: .3em;
+  font-family: inherit;
+  font-size: inherit;
+  list-style-type: none;
+  background: #202020;
+  border: 1px solid #3b3b3b;
+  border-radius: 0;
+  -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.76);
+          box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.76); }
+
+.context-menu-item {
+  position: relative;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  padding: .5em 2em;
+  color: #ececec;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  font-family: lato;
+  font-size: 14px;
+  background: none; }
+  .context-menu-item.context-menu-hover {
+    color: #fff;
+    cursor: pointer;
+    background-color: #333; }
+  .context-menu-item.context-menu-separator {
+    padding: 0;
+    margin: 5px;
+    border-bottom: 1px solid #3e3e3e; }
+  .context-menu-item .context-menu-submenu::after {
+    border-color: transparent transparent transparent #6b6b6b;
+    border-style: solid;
+    border-width: .4em 0 .4em .4em; }

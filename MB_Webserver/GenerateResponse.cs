@@ -58,11 +58,6 @@ namespace MusicBeePlugin
 					MbApi.Player_PlayNextTrack();
 					break;
 
-
-				case "getnowplaylist":
-					GetNowPlaylist();
-					break;
-
 				case "queryFiles":
 					QueryFiles();
 					break;
@@ -88,10 +83,6 @@ namespace MusicBeePlugin
 
 						case "setvol":
 							SetVolume(float.Parse(value, CultureInfo.InvariantCulture.NumberFormat));
-							break;
-
-						case "playtrack":
-							PlayPlaylistTrack(value);
 							break;
 
 						case "getSimilarArtist":
@@ -127,7 +118,7 @@ namespace MusicBeePlugin
 			catch (Exception){ }
 		}
 
-		private static void QueryFiles(string query = "")
+		public static AlbumList QueryFiles(string query = "")
 		{
 			try
 			{
@@ -138,7 +129,9 @@ namespace MusicBeePlugin
 					MetaDataType.AlbumArtist,
 					MetaDataType.Artist,
 					MetaDataType.TrackNo,
-					MetaDataType.Rating
+					MetaDataType.Rating,
+					MetaDataType.TrackTitle,
+					MetaDataType.RatingLove,
 				};
 
 				List<TrackData> allTrackData= new List<TrackData>();
@@ -156,6 +149,8 @@ namespace MusicBeePlugin
 						Artist = fileTags[2],
 						TrackNo = fileTags[3],
 						Rating = fileTags[4],
+						TrackTitle = fileTags[5],
+						Loved = fileTags[6],
 					});
 				}
 
@@ -169,7 +164,7 @@ namespace MusicBeePlugin
 				AlbumList trackLists = new AlbumList() { callback_function = "fileQueryComplete", AlbumLists = GroupedTrackList };
 
 
-				WsRef.SendMessage(Util.Serialize(trackLists));
+				return trackLists;
 			}
 			catch (Exception e)
 			{
@@ -239,83 +234,91 @@ namespace MusicBeePlugin
 		/// </summary>
 		/// <param name="filePath"></param>
 		/// <returns>Stream</returns>
-		public static Stream GetArtwork(string filePath)
+		public static Stream GetArtwork(string filePath, int width = 300, int height = 300)
 		{
-			var file = TagLib.File.Create(filePath.Replace(".jpg", ""));
-			if (file.Tag.Pictures.Length >= 1)
+			TagLib.File file;
+			try
 			{
-				var bin = file.Tag.Pictures[0].Data.Data;
+				file = TagLib.File.Create(filePath);
+			}
+			catch (Exception)
+			{
+				file = TagLib.File.Create(Path.Combine(
+					Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+					"web\\img\\artwork-default.png"));
+			}
 
-				//Of course image bytes is set to the bytearray of your image      
-
-				using (MemoryStream ms = new MemoryStream(bin, 0, bin.Length))
+			if (file.Tag.Pictures.Length >= 1)
 				{
-					using (Image img = Image.FromStream(ms))
+					var bin = file.Tag.Pictures[0].Data.Data;
+					using (MemoryStream ms = new MemoryStream(bin, 0, bin.Length))
 					{
-						int h = 300;
-						int w = 300;
-
-						using (Bitmap b = new Bitmap(img, new Size(w, h)))
+						using (Image img = Image.FromStream(ms))
 						{
-							using (MemoryStream ms2 = new MemoryStream())
+							using (Bitmap b = new Bitmap(img, new Size(width, height)))
 							{
-								b.Save(ms2, System.Drawing.Imaging.ImageFormat.Jpeg);
-								bin = ms2.ToArray();
+								using (MemoryStream ms2 = new MemoryStream())
+								{
+									b.Save(ms2, System.Drawing.Imaging.ImageFormat.Jpeg);
+									bin = ms2.ToArray();
+								}
 							}
 						}
 					}
+					return new MemoryStream(bin);
 				}
-
-				return new System.IO.MemoryStream(bin);
-			}
-
 			return null;
 		}
 
-		public static void GetNowPlaylist()
+		public static AlbumList GetNowPlaylist()
 		{
-			PlaylistData data = new PlaylistData();
-			List<string[]> list = new List<string[]>();
-			string url = null;
-
+			string[] allFiles = { };
+			MbApi.NowPlayingList_QueryFilesEx("", ref allFiles);
 			MetaDataType[] fields = {
-					MetaDataType.TrackTitle,
 					MetaDataType.Album,
+					MetaDataType.AlbumArtist,
 					MetaDataType.Artist,
-					MetaDataType.Year,
+					MetaDataType.TrackNo,
 					MetaDataType.Rating,
+					MetaDataType.TrackTitle,
 					MetaDataType.RatingLove,
-					MetaDataType.Genre
 				};
-			string[] playlist = null;
-			int i = 0;
-			while (true)
+
+
+			List<TrackData> allTrackData = new List<TrackData>();
+
+			for (int i = 0; i < allFiles.Length; i++)
 			{
-				MbApi.NowPlayingList_GetFileTags(i, fields, ref playlist);
-				url = MbApi.NowPlayingList_GetFileProperty(i, FilePropertyType.Url);
+				string[] fileTags = { };
+				MbApi.Library_GetFileTags(allFiles[i], fields, ref fileTags);
 
-				if (playlist is null)
+				allTrackData.Add(new TrackData()
 				{
-					break;
-				}
-
-				Array.Resize(ref playlist, playlist.Length + 1);
-				playlist[7] = url;
-
-				list.Add(playlist);
-				playlist = null;
-				i++;
+					FilePath = allFiles[i],
+					Album = fileTags[0],
+					AlbumArtist = fileTags[1],
+					Artist = fileTags[2],
+					TrackNo = fileTags[3],
+					Rating = fileTags[4],
+					TrackTitle = fileTags[5],
+					Loved = fileTags[6],
+				});
 			}
 
+			var GroupedTrackList = allTrackData.GroupBy(t => new { t.Album, t.AlbumArtist }).Select(
+				albm => new AlbumData()
+				{
+					Album = albm.Key.Album,
+					AlbumArtist = albm.Key.AlbumArtist,
+					TrackList = albm.ToList(),
+				}).ToList();
 
-			data.Playlist = list;
-			data.callback_function = "SetPlaylistData";
-
-			WsRef.SendMessage(Util.Serialize(data));
+			return new AlbumList() {
+				callback_function = "updatePlaylistData", AlbumLists = GroupedTrackList };
 		}
 
 
-		private static void PlayPlaylistTrack(string url)
+		public static void PlayTrack(string url)
 		{
 			MbApi.NowPlayingList_PlayNow(url);
 		}

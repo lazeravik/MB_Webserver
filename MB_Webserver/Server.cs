@@ -25,6 +25,7 @@ namespace WebServer
 
         public Server()
         {
+			Nancy.Json.JsonSettings.MaxJsonLength = int.MaxValue;
             NancyHostConfig = new HostConfiguration()
             {
                 UrlReservations = new UrlReservations() { CreateAutomatically = true, },
