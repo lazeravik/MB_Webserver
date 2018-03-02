@@ -140,9 +140,23 @@ nav.menu {
   background-size: cover;
   background-position: center center;
 
+  &:before{
+    content: '';
+    display: block;
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
+    background: url("../img/acrylic.png") repeat;
+    opacity: 0.35;
+  }
+
   .content {
     background: linear-gradient(rgba(0, 0, 0, 0.67), rgba(0, 0, 0, 0.66));
     width: 80%;
+    overflow: auto;
+	z-index: 1;
   }
 
 
@@ -529,4 +543,56 @@ input[type="range"]:focus + .rangeslider .rangeslider__handle {
 		border-style: solid;
 		border-width: .4em 0 .4em .4em;
 	}
+}
+
+
+
+.albumcover-view {
+  margin: 0px;
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  outline: 1px solid rgba(255, 255, 255, 0);
+
+  > li {
+    list-style: none;
+    width: 11%;
+    color: #fff;
+    box-sizing: border-box;
+    cursor: default;
+
+    > ul.track-list {
+      display: none;
+    }
+
+    .cover {
+      text-align: center;
+      padding: 15px 10px;
+
+      img {
+        width: 120px;
+        height: 120px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.65);
+      }
+
+      .album-name {
+        margin: 3px;
+        font-size: 14px;
+      }
+
+      .artist-name {
+        font-size: 13px;
+        margin: 0px;
+        color: #b4b4b4;
+      }
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.13);
+      transition: linear all .1s;
+      box-shadow: 1px 1px 5px #0006;
+      outline: 1px solid rgba(255, 255, 255, 0.28);
+    }
+  }
 }

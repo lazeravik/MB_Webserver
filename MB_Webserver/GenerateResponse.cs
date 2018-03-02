@@ -100,6 +100,26 @@ namespace MusicBeePlugin
 			}
 		}
 
+		public static Stream GetCurrentArtworkBlur()
+		{
+			using (Image img = Image.FromStream(GetCurrentArtwork()))
+			{
+				using (Bitmap b = new Bitmap(img, new Size(100, 100)))
+				{
+					var blur = new SuperfastBlur.GaussianBlur(b);
+					var blurredImage = blur.Process(10);
+					byte[] bin;
+					using (MemoryStream ms2 = new MemoryStream())
+					{
+						blurredImage.Save(ms2, System.Drawing.Imaging.ImageFormat.Jpeg);
+						bin = ms2.ToArray();
+					}
+					return new MemoryStream(bin);
+				}
+			}
+
+		}
+
 		public static Stream GetCurrentArtwork()
 		{
 			return GetArtwork(MbApi.NowPlaying_GetFileUrl());
@@ -159,7 +179,7 @@ namespace MusicBeePlugin
 						Album = albm.Key.Album,
 						AlbumArtist = albm.Key.AlbumArtist,
 						TrackList = albm.ToList(),
-					}).ToList();
+					}).OrderBy(x => x.Album).ToList();
 
 				AlbumList trackLists = new AlbumList() { callback_function = "fileQueryComplete", AlbumLists = GroupedTrackList };
 

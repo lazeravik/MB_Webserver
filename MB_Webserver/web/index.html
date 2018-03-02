@@ -214,6 +214,37 @@
         });
     }
 
+    function LoadPanel(panelname)
+    {
+        container.html("");
+
+        var link;
+
+        switch(panelname){
+            case 'Library':
+                link = "/html/getlibrary";
+                break;
+
+            case 'NowPlaying':
+                link = "/html/getNowPlaying";
+                break;
+
+            default:
+                link = "html/getNowPlaying";
+        }
+
+        if(link === "") return;
+        $.ajax({
+            url: link,
+            cache: false,
+            success: function (html) {
+                container.html(html);
+                InitializeLibraryLazyLoading();
+               // bLazy.revalidate();
+            }
+        });
+    };
+
     function InitializeRouter()
     {
         var router = new Route32({
@@ -222,11 +253,13 @@
 
         router.add('#/now-playing/', function () {
             clearNavigation();
+            LoadPanel("NowPlaying");
             nowplaying_mnubtn.addClass("selected");
         });
 
         router.add('#/library/', function () {
             clearNavigation();
+            LoadPanel("Library");
             library_mnubtn.addClass("selected");
         });
 
@@ -252,6 +285,15 @@
                     console.log(ele);
                 }
             }
+        });
+    }
+
+    function InitializeLibraryLazyLoading()
+    {
+    	console.log("blazy for library should initiate");
+    	var bLazy1 = new Blazy({
+    		offset: 100,
+    		container: ".content",
         });
     }
 
@@ -305,23 +347,6 @@
         //makeRequest("getnowplaylist");
         makeRequest("queryFiles/");
     });
-
-    function blurDo() {
-
-        var bg_blur = document.getElementById("bg_hero_blur");
-        var ctx = bg_blur.getContext("2d");
-        var img = new Image();
-        img.setAttribute('crossOrigin', 'anonymous');
-        img.src = $("#current-track-artwork").attr("src");
-        img.alt = "Album Art";
-        img.onload = function () {
-            console.log("Blur background");
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, bg_blur.width, bg_blur.height);// draw image
-            stackBlurCanvasRGB("bg_hero_blur", 0, 0, bg_blur.width, bg_blur.width, 40);
-            var $blurryData = bg_blur.toDataURL();
-            $('#content-bg').attr('style', 'background-image: url("' + $blurryData + '");');
-        }
-    }
 
 
     function startSocket(websocketServerLocation) {
@@ -474,14 +499,26 @@
     function updateArtwork() {
         if (current_player_data.ArtworkPath) {
             // makeRequest("getnowplaylist");
-            setCurrentArtwork("currentArtwork.jpg");
+            setCurrentArtwork(current_player_data.ArtworkPath.hashCode());
         }
     }
 
     function setCurrentArtwork(url) {
-        artwork.attr("src", url);
-        blurDo();
+        artwork.attr("src", "currentArtwork/"+ url+ ".jpg");
+        $('#content-bg').attr('style', 'background-image: url(\'blur/'+ url +'.jpg\');');
+
     }
+
+    String.prototype.hashCode = function() {
+        var hash = 0, i, chr;
+        if (this.length === 0) return hash;
+        for (i = 0; i < this.length; i++) {
+            chr   = this.charCodeAt(i);
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
+    };
 
     function updatePlayerControl(playstate, trackTitle, trackArtist, curVol) {
         track_title.html(trackTitle + " - " + trackArtist);
@@ -549,7 +586,6 @@
 </script>
 <script src="./js/reconnecting-websocket.min.js"></script>
 <script src="./js/blazy.min.js"></script>
-<script src="./js/StackBlur.js"></script>
 <script src="./js/jquery.route32.js"></script>
 </body>
 </html>

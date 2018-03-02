@@ -29,9 +29,14 @@ namespace MusicBeePlugin
                 return Response.AsImage(string.Format("./img/{0}", (string)x.name));
             };
 
-			Get[@"/currentArtwork.jpg"] = x =>
+			Get[@"/currentArtwork/{hash}.jpg"] = x =>
 			{
 				return Response.AsStream(() => GenerateResponse.GetCurrentArtwork(), "image/*");
+			};
+
+			Get[@"/blur/{hash}.jpg"] = x =>
+			{
+				return Response.AsStream(() => GenerateResponse.GetCurrentArtworkBlur(), "image/*");
 			};
 
 			Get[@"/mimg/{path*}"] = x =>
@@ -40,15 +45,15 @@ namespace MusicBeePlugin
 					Util.Decode64(((string)x.path).Replace(".jpg", "")), 40, 40), "image/*");
 			};
 
+			Get[@"/cimg/{path*}"] = x =>
+			{
+				return Response.AsStream(() => GenerateResponse.GetArtwork(
+					Util.Decode64(((string)x.path).Replace(".jpg", "")), 120, 120), "image/*");
+			};
+
 			Get[@"/queryfiles/{query}"] = q =>
 			{
 				return Response.AsJson(GenerateResponse.QueryFiles(), HttpStatusCode.OK);
-			};
-
-			Get[@"/html/nowplayinglist"] = q =>
-			{
-				return Response.AsText(new NowplayinglistGenerator(
-					GenerateResponse.GetNowPlaylist()).GetGeneratedResponse(), "text/html");
 			};
 
 			Get[@"/play/file/{track}"] = q =>
@@ -58,6 +63,24 @@ namespace MusicBeePlugin
 				return Response.AsText((string)trackPath);
 			};
 
+			Get[@"/html/nowplayinglist"] = q =>
+			{
+				return Response.AsText(new NowplayinglistGenerator(
+					GenerateResponse.GetNowPlaylist()).GetGeneratedResponse(), "text/html");
+			};
+
+			Get[@"/html/getlibrary"] = q =>
+			{
+				return Response.AsText(new LibraryGenerator(
+					GenerateResponse.QueryFiles()).GetGeneratedResponse(), "text/html");
+			};
+
+
+			Get[@"/html/getNowPlaying"] = q =>
+			{
+				return Response.AsText(new NowPlayingPage().GetGeneratedResponse(), "text/html");
+			};
+
 		}
-    }
+	}
 }
