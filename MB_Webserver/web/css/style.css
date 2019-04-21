@@ -461,13 +461,14 @@ input[type="range"]:focus + .rangeslider .rangeslider__handle {
       -ms-flex-pack: justify;
           justify-content: space-between;
   outline: 1px solid rgba(255, 255, 255, 0); }
-  .albumcover-view > li {
-    list-style: none;
-    width: 11%;
-    color: #fff;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    cursor: default; }
+	.albumcover-view > li {
+		list-style: none;
+		width: 150px;
+		color: #fff;
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		cursor: default;
+	}
     .albumcover-view > li > ul.track-list {
       display: none; }
     .albumcover-view > li .cover {

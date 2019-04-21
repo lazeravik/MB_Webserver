@@ -22,7 +22,7 @@
 </nav>
 <div class="sidebar collapsed">
     <ul>
-        <li><a id="nowplaying_mnu" class="selected" href="#/now-playing/"><i class="ficon icon-play"></i></a></li>
+        <li><a id="nowplaying_mnu" class="selected" href="#/nowplaying/"><i class="ficon icon-play"></i></a></li>
         <li><a id="library_mnu" href="#/library/"><i class="ficon icon-note-beamed"></i></a></li>
         <li><a id="setting_mnu" href="#/settings/"><i class="ficon icon-tools"></i></a></li>
     </ul>
@@ -30,18 +30,6 @@
 
 <div class="content-wrapper" id="content-bg">
     <div class="content" id="container">
-        <div class="song-info" id="song-info">
-            <div class="overlay">
-                <div class="artwork">
-                    <img id="current-track-artwork" class="current-track-artwork" src="/img/artwork-default.png">
-                </div>
-                <div class="trackinfo">
-                    <h1 id="title-big" class="track-title">Track Title</h1>
-                    <p><span id="artist-big" class="artist">Artist name</span><span id="album-big" class="album">Album name</span></p>
-					<p class="artistinfo" id="artistInfo"></p>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="rsidebar">
         <div class="inner">
@@ -226,11 +214,11 @@
                 break;
 
             case 'NowPlaying':
-                link = "/html/getNowPlaying";
+            	link = "html/getNowPlaying";
                 break;
 
             default:
-                link = "html/getNowPlaying";
+            	link = "html/getNowPlaying";
         }
 
         if(link === "") return;
@@ -240,6 +228,7 @@
             success: function (html) {
                 container.html(html);
                 InitializeLibraryLazyLoading();
+                updateNowPlayingPage(true);
                // bLazy.revalidate();
             }
         });
@@ -251,7 +240,7 @@
             'automatic': true
         });
 
-        router.add('#/now-playing/', function () {
+        router.add('#/nowplaying/', function () {
             clearNavigation();
             LoadPanel("NowPlaying");
             nowplaying_mnubtn.addClass("selected");
@@ -434,12 +423,13 @@
         console.log(data);
     }
 
-    function updatePlayerData() {
-        if(current_player_data.HasTrackChanged){
+    function updateNowPlayingPage(forceChange) {
+    	if (current_player_data.HasTrackChanged || forceChange) {
             $("#title-big").html(current_player_data.CurrentTrackTitle);
             $("#artist-big").html(current_player_data.CurrentTrackArtist);
             $("#album-big").html(current_player_data.CurrentTrackAlbum);
             $("#artistInfo").html(current_player_data.ArtistDataset.ArtistInfo);
+            updateArtwork();
         }
     }
 
@@ -447,8 +437,7 @@
         current_player_data = data;
         updatePlayerControl(data.CurrentPlayerState, data.CurrentTrackTitle, data.CurrentTrackArtist, data.CurrentVolume);
         updateProgress(data.CurrentTrackCompleted, data.CurrentTrackSizeReadable, data.CurrentTrackPositionReadable);
-        updatePlayerData();
-        updateArtwork();
+        updateNowPlayingPage(false);
         updateBrowserElem();
     }
 

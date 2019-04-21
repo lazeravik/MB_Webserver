@@ -57,6 +57,9 @@
     <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="SuperfastBlur">
+      <HintPath>..\superfastblur\SuperfastBlur\bin\Debug\SuperfastBlur.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -114,7 +117,6 @@
     </Compile>
     <Compile Include="Server.cs" />
     <Compile Include="Models\SimilarArtists.cs" />
-    <Compile Include="TestControl.cs" />
     <Compile Include="Utils\Util.cs" />
     <Compile Include="WSServer.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -143,16 +145,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\superfastblur-master\SuperfastBlur\SuperfastBlur.csproj">
-      <Project>{956ae992-662a-48c7-b079-890ca3e15a0b}</Project>
-      <Name>SuperfastBlur</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="web\favicon.ico" />
@@ -172,10 +164,13 @@
     <Resource Include="web\img\artwork-default.png" />
     <Content Include="web\index.html" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Themes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)\*.*" "C:\Users\AvikB\AppData\Roaming\MusicBee\Plugins"
-xcopy "$(ProjectDir)\web\*.*" "C:\Users\AvikB\AppData\Roaming\MusicBee\Plugins\web" /Y/D/E</PostBuildEvent>
+    <PostBuildEvent>copy /Y "$(TargetDir)\*.*" "C:\Users\avika\AppData\Roaming\MusicBee\Plugins"
+xcopy "$(ProjectDir)\web\*.*" "C:\Users\avika\AppData\Roaming\MusicBee\Plugins\web" /Y/D/E</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

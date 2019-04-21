@@ -18,8 +18,6 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "MusicBee", "C:\Program File
 		AttachLaunchAction = No
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperfastBlur", "..\superfastblur-master\SuperfastBlur\SuperfastBlur.csproj", "{956AE992-662A-48C7-B079-890CA3E15A0B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
